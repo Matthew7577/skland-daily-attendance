@@ -91,7 +91,7 @@ SKLAND_TOKENS=your-token-1,your-token-2
 
 #### 2. 配置消息通知 (可选)
 
-通过 [Statocysts](https://github.com/enpitsuLin/statocysts) 支持等多种通知方式，将对应格式的通知 URL 设置到环境变量 `SKLAND_NOTIFICATION_URLS` 中，多个 URL 用逗号分隔。
+通过 [Statocysts](https://github.com/octoplorer/statocysts) 支持等多种通知方式，将对应格式的通知 URL 设置到环境变量 `SKLAND_NOTIFICATION_URLS` 中，多个 URL 用逗号分隔。
 
 ```bash
 SKLAND_NOTIFICATION_URLS="Statocysts 格式通知 URL"
@@ -101,7 +101,7 @@ SKLAND_NOTIFICATION_URLS="Statocysts 格式通知 URL"
 
 项目支持使用持久化存储来记录每日签到状态。
 
-因为每次计划任务执行不一定签到成功所以本服务使用每 2 小时执行的计划任务保证当天的签到任务成功，所以需要持久化储存对应日期的签到状态避免成功后重复签到。
+因为每次计划任务执行不一定签到成功，所以本服务在除了 Github Actions 的情况下使用，会通过每 2 小时执行的计划任务保证当天的签到任务成功，所以需要持久化储存对应日期的签到状态避免成功后重复签到。
 
 > [!WARNING]
 > 因为项目默认使用 2 小时的计划任务执行签到任务，所以在使用中不需要那么高的频率来执行签到任务，需要在 `nitro.config.ts` 中手动调整计划任务的执行频率。

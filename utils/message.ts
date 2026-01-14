@@ -9,13 +9,48 @@ export interface CreateMessageCollectorOptions {
   onError?: () => void
 }
 
-export function createMessageCollector(options: CreateMessageCollectorOptions) {
+export interface CollectOptions {
+  output?: boolean // Whether to output to console (default: false)
+  isError?: boolean // Whether this is an error message (default: false)
+}
+
+export interface MessageCollector {
+  // Console output only
+  log: (message: string) => void
+  error: (message: string) => void
+
+  // Collect message for notification with optional console output
+  collect: (message: string, options?: CollectOptions) => void
+
+  push: () => Promise<void>
+  hasError: () => boolean
+}
+
+export function createMessageCollector(options: CreateMessageCollectorOptions): MessageCollector {
   const messages: string[] = []
   let hasError = false
 
-  const log = (message: string, isError = false) => {
+  const log = (message: string) => {
+    console.log(message)
+  }
+
+  const error = (message: string) => {
+    console.error(message)
+    hasError = true
+  }
+
+  const collect = (message: string, opts: CollectOptions = {}) => {
+    const { output = false, isError = false } = opts
+
+    // Add to notification messages
     messages.push(message)
-    console[isError ? 'error' : 'log'](message)
+
+    // Output to console if requested
+    if (output) {
+      console[isError ? 'error' : 'log'](message)
+    }
+
+    // Mark as error if needed
     if (isError) {
       hasError = true
     }
@@ -35,5 +70,5 @@ export function createMessageCollector(options: CreateMessageCollectorOptions) {
     }
   }
 
-  return { log, push, hasError: () => hasError } as const
+  return { log, error, collect, push, hasError: () => hasError } as const
 }
