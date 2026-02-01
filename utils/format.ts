@@ -13,25 +13,31 @@ export function formatGameName(appCode: string): string {
 
 export function formatCharacterName(character: AppBindingPlayer, appName?: string) {
   const gamePrefix = appName ? `【${appName}】` : ''
-  return `${gamePrefix}${character.channelName}角色${formatPrivacyName(character)}`
+  return `${gamePrefix}${character.channelName}角色 ${formatPrivacyName(character)}`
 }
 
 export function formatPrivacyName(character: AppBindingPlayer) {
+  // eslint-disable-next-line node/prefer-global/process
+  const isMinimalPrivacy = !!process.env.SKLAND_ANONYMOUS
+
   // 终末地的昵称在 defaultRole 里取
-  if (character.gameId === 3)
-    return `${maskNickname(character.defaultRole?.nickname || '')} lv.${character.defaultRole?.level || 0}`
+  if (character.gameId === 3) {
+    const nickname = isMinimalPrivacy ? '管理员' : maskNickname(character.defaultRole?.nickname || '')
+    return `${nickname} lv.${character.defaultRole?.level || 0}`
+  }
 
   const nickName = character.nickName
   const [name, number] = nickName.split('#')
   if (!name)
     throw new Error('Unexpected Error: 明日方舟 nickName 格式不正确')
 
-  return `${maskNickname(name)}#${number}`
+  const displayName = isMinimalPrivacy ? '博士 ' : maskNickname(name)
+  return `${displayName}#${number}`
 }
 
 function maskNickname(name: string) {
   if (name.length <= 1)
-    return "*"
+    return '*'
 
   const firstChar = name[0]
   const stars = '*'.repeat(name.length - 1)
